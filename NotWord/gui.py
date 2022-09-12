@@ -6,14 +6,14 @@ from tkinter import filedialog
 import ctypes
 from tkinter.messagebox import RETRY
 import pyperclip as pc
-import tkinter.font as TkFont
+from tkinter import font
 
 root = Tk()
 root.title("NotWord")
 root.geometry("1920x1080")
 #root.iconbitmap("NotWord\justicon.ico")
 
-textediting_frame = Frame(root, bg="white", width=1920, height=70, pady=3).grid(column=0, row=0, columnspan=3)
+textediting_frame = Frame(root, bg="white", width=1920, height=200, pady=3).grid(column=0, row=0, columnspan=3)
 textwrite_frame = Frame(root, bg="#bdd4ff", width=1920, height=1080, pady=3).grid(column=0, row=1, columnspan=3)
 
 
@@ -94,18 +94,29 @@ def reversetext():
     inputtxt.delete('1.0', END)
     inputtxt.insert(END, inp[::-1])
 
+our_font = font.Font(family="Helvetica", size="10")
 
-fontentry = Entry(textediting_frame).grid(column=0,row=0)
-inputtxt = Text(textediting_frame, width=150, height=67, font=("Arial", 10))
+def font_size_chooser(e):
+    our_font.config(
+		size = font_size_listbox.get(font_size_listbox.curselection()))
+
+def font_family_chooser(e):
+    our_font.config(
+		family = font_family_listbox.get(font_family_listbox.curselection()))
+
+inputtxt = Text(textediting_frame, width=150, height=67, font=our_font)
 inputtxt.grid(column=1, row=1)
 
-def updates(inputtxt):
-    fontsize = fontentry.get()
-    inputtxt.grid_forget()
-    inputtxt = Text(textediting_frame, width=150, height=67, font=("Arial", fontsize)).grid(column=1, row=1)
+font_size_listbox = Listbox(textediting_frame, selectmode=SINGLE, width=20 )
+font_size_listbox.grid(row=0, column=0)
 
-makechange_button = Button(textediting_frame, text="Make Changes!", command=lambda: updates(inputtxt)).grid(column=1,row=0)
+font_family_listbox = Listbox(textediting_frame, selectmode=SINGLE, width=20 )
+font_family_listbox.grid(row=0, column=1)
 
+font_label = Label(textediting_frame, text="Choose Font Size", font=("Helvetica", 10))
+font_label.grid(row=0, column=0, padx=10, sticky=W)
+font_label = Label(textediting_frame, text="Choose Font", font=("Helvetica", 10))
+font_label.grid(row=0, column=1, padx=10, sticky=W)
 
 menubar = Menu(root)
 filemenu = Menu(menubar, tearoff=0)
@@ -143,5 +154,16 @@ menubar.add_cascade(label="Formating", menu=formatmenu)
 
 root.config(menu=menubar)
 
+font_sizes = [8, 10, 12, 14, 16, 18, 20, 36, 48]
+for size in font_sizes:
+	font_size_listbox.insert('end', size)
+
+font_families = ["Arial", "Comic Sans MS"]
+for family in font_families:
+	font_family_listbox.insert('end', family)
+
+font_family_listbox.bind('<ButtonRelease-1>', font_family_chooser)
+
+font_size_listbox.bind('<ButtonRelease-1>', font_size_chooser)
 
 root.mainloop()
